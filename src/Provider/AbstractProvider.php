@@ -107,6 +107,29 @@ abstract class AbstractProvider implements ProviderInterface
     }
     // @codeCoverageIgnoreEnd
 
+    public function exchangeShortToken($shortToken)
+    {
+        if (is_string($shortToken)) {
+            // process token exchange
+            $url = $this->urlExchangeShortToken($shortToken);
+            $client = $this->getHttpClient();
+            $request = $client->createRequest('GET', $url);
+            $response = $client->send($request);
+            $responseBody = $response->getBody(true);
+            parse_str($responseBody, $output);
+
+            if (isset($output['access_token'])) {
+                $accessToken = $output['access_token'];
+                $accessTokenExpires = $output['expires'] ?: '';
+            }
+            
+            
+            return new AccessToken(array('access_token' => $accessToken, 'expires' => $accessTokenExpires));
+        }
+
+        throw new \InvalidArgumentException('Unknown short token type');
+    }
+
     public function getAccessToken($grant = 'authorization_code', $params = array())
     {
         if (is_string($grant)) {

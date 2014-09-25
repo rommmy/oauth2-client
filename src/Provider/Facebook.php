@@ -7,7 +7,7 @@ use League\OAuth2\Client\Entity\User;
 class Facebook extends AbstractProvider
 {
     public $scopes = array('offline_access', 'email', 'read_stream');
-    public $responseType = 'string'; // test
+    public $responseType = 'string';
 
     public function urlAuthorize()
     {
@@ -22,6 +22,11 @@ class Facebook extends AbstractProvider
     public function urlUserDetails(\League\OAuth2\Client\Token\AccessToken $token)
     {
         return 'https://graph.facebook.com/me?access_token='.$token;
+    }
+
+    public function urlExchangeShortToken($token)
+    {
+        return 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id='.$this->clientId.'&client_secret='.$this->clientSecret.'&fb_exchange_token='.$token;
     }
 
     public function userDetails($response, \League\OAuth2\Client\Token\AccessToken $token)
